@@ -24,7 +24,6 @@ def export_alb(regions, output_file_path):
                     payload_outer.append(payload_inner.copy())
 
     field_names = ["Name", "DNSName", "Type", "Scheme", "State", "Region"]
-    print(f"Exporting ALB report at {output_file_path}")
     filename = "alb_report.csv"
     with open(f'{output_file_path}{filename}', 'w') as csvfile:
         writer = csv.DictWriter(csvfile, quoting=csv.QUOTE_ALL,
@@ -32,5 +31,4 @@ def export_alb(regions, output_file_path):
         writer.writeheader()
         for i in payload_outer:
             writer.writerow(i)
-    print(f"ALB Report has been exported")
     return

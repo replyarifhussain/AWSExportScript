@@ -46,7 +46,6 @@ def export_ec2(regions, output_file_path,launchedOver24hr=False):
 
     field_names=['Instance Name', 'Host', 'Ip Address',  'Primary Ebs Size', 'Primary Ebs Encryption Status', 'Secondary Ebs Size', 'Secondary Ebs Encryption Status'
                  ,'Region']
-    print(f"Exporting Report at {output_file_path}")
     filename= "ec2_report.csv" if launchedOver24hr else "ec2_launched_over24hrs_report.csv"
     rows= payload_outer_launchecOver if launchedOver24hr else payload_outer
     with open(f'{output_file_path}{filename}', 'w') as csvfile:
@@ -55,7 +54,6 @@ def export_ec2(regions, output_file_path,launchedOver24hr=False):
         writer.writeheader()
         for i in rows:
             writer.writerow(i)
-    print(f"Ecs Report has been exported")
 
     return
 
