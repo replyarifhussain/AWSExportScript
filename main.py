@@ -8,6 +8,6 @@ if __name__ == '__main__':
     regions = [region['RegionName'] for region in ec2_client.describe_regions()['Regions']]
     cwd = os.getcwd()
     path=os.path.join(cwd, "")
-    # export_ec2(regions,path)
-    # export_ec2(regions,path,launchedOver24hr=True)
+    export_ec2(regions,path)
+    export_ec2(regions,path,launchedOver24hr=True)
     export_alb(regions,path)
