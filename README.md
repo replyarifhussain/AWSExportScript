@@ -27,3 +27,11 @@ Export Aws Services to csv
     ```
       python3 main.py
       ```
+6. Replace the environment variables 
+    
+    i) set SMPT_PASSWORD to the app password you generated through email provider
+   
+   ii) set SMPT_USER to your email address
+  
+   iii) set TO_EMAIL to all the recipients (Note: comma seperatedfor multiple recipients)
+  
