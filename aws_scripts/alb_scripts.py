@@ -4,11 +4,15 @@ import boto3
 from datetime import datetime, timedelta
 
 
-def export_alb(regions, output_file_path):
+def export_alb(regions,secret_key,secret_key_id, output_file_path):
     payload_outer = []
     payload_inner = dict()
     for r in regions:
-        ec2client = boto3.client('elbv2', region_name=r)
+        session = boto3.Session(
+            aws_access_key_id=secret_key_id,
+            aws_secret_access_key=secret_key,
+            region_name=r)
+        ec2client = session.client('elbv2')
         paginator = ec2client.get_paginator('describe_load_balancers')
         page_iterator = paginator.paginate()
 

@@ -14,12 +14,17 @@ if __name__ == '__main__':
         if not os.path.exists(filepath):
             os.makedirs(filepath)
         filepath = os.path.join(filepath, "")
-        ec2_client = boto3.client('ec2', region_name="us-east-1")
-        regions = [region['RegionName'] for region in ec2_client.describe_regions()['Regions']]
+        AWS_SECRET_ID = os.getenv("AWS_SECRET_ID")
+        AWS_SECRET_KEY = os.getenv("AWS_SECRET_KEY")
+        session = boto3.Session(
+            aws_access_key_id=AWS_SECRET_ID,
+            aws_secret_access_key=AWS_SECRET_KEY)
+
+        aws_client = session.client('ec2', region_name="us-east-1")
+        regions = [region['RegionName'] for region in aws_client.describe_regions()['Regions']]
         print("*** Start Generating Report ***")
-        # export_ec2(regions, filepath)
-        # export_ec2(regions, filepath, launchedOver24hr=True)
-        # export_alb(regions, filepath)
+        export_ec2(regions,AWS_SECRET_KEY,AWS_SECRET_ID, filepath)
+        export_alb(regions,AWS_SECRET_KEY,AWS_SECRET_ID, filepath)
         print(f"Reports are located at {filepath}")
         print("*** Finish Generating Report ***")
     except Exception as e:
