@@ -34,4 +34,6 @@ Export Aws Services to csv
    ii) set SMPT_USER to your email address
   
    iii) set TO_EMAIL to all the recipients (Note: comma seperatedfor multiple recipients)
+
+   iv) set AWS_SECRET_KEY & AWS_SECRET_ID values 
   
