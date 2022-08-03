@@ -27,37 +27,38 @@ def export_ec2(regions, secret_key, secret_key_id, output_file_path):
         for page in page_iterator:
             for each_res in page['Reservations']:
                 instance = each_res['Instances'][0]
-                if instance['State']['Name'] == "running":
-                    volumes = ec2client.describe_volumes(
-                        Filters=[{'Name': 'attachment.instance-id', 'Values': [instance['InstanceId']]}]
-                    )
-                    volume_devices = volumes.get('Volumes', [])
-                    root_device_name = instance.get("RootDeviceName")
-                    root_device = {}
-                    for vol in volume_devices:
-                        is_root = [i.get("Device", '') for i in vol.get("Attachments", []) if
-                                   i.get("Device", '') == root_device_name]
-                        if is_root:
-                            root_devide = vol
-                    secondary_devices = [v for v in volume_devices if
-                                         v.get("VolumeId") != root_devide.get("VolumeId") and v.get(
-                                             'State') == 'in-use']
-                    secondary_device = secondary_devices[0] if secondary_devices else dict()
-                    inst_names = [i['Value'] for i in instance['Tags'] if i['Key'] == 'Name']
-                    payload_inner['Instance Name'] = inst_names[0] if inst_names else ''
-                    payload_inner['Host'] = instance.get('PublicDnsName')
-                    payload_inner['Ip Address'] = instance.get('PublicIpAddress')
-                    payload_inner['Primary Ebs Size'] = root_devide.get("Size", "")
-                    payload_inner['Primary Ebs Encryption Status'] = "Encrypted" if root_devide.get(
-                        "Encrypted") else "UnEncrypted"
-                    payload_inner['Secondary Ebs Size'] = secondary_device.get("Size", "")
-                    payload_inner['Secondary Ebs Encryption Status'] = "Encrypted" if secondary_device.get(
-                        "Encrypted") else "UnEncrypted"
-                    payload_inner['Region'] = r
-                    launchedOver24hr = launched_in_last24hours(instance.get('LaunchTime'))
-                    if launchedOver24hr:
-                        payload_outer_launchecOver.append(payload_inner.copy())
-                    payload_outer.append(payload_inner.copy())
+                for instance in each_res['Instances']:
+                    if instance['State']['Name'] == "running":
+                        volumes = ec2client.describe_volumes(
+                            Filters=[{'Name': 'attachment.instance-id', 'Values': [instance['InstanceId']]}]
+                        )
+                        volume_devices = volumes.get('Volumes', [])
+                        root_device_name = instance.get("RootDeviceName")
+                        root_device = {}
+                        for vol in volume_devices:
+                            is_root = [i.get("Device", '') for i in vol.get("Attachments", []) if
+                                       i.get("Device", '') == root_device_name]
+                            if is_root:
+                                root_devide = vol
+                        secondary_devices = [v for v in volume_devices if
+                                             v.get("VolumeId") != root_devide.get("VolumeId") and v.get(
+                                                 'State') == 'in-use']
+                        secondary_device = secondary_devices[0] if secondary_devices else dict()
+                        inst_names = [i['Value'] for i in instance['Tags'] if i['Key'] == 'Name']
+                        payload_inner['Instance Name'] = inst_names[0] if inst_names else ''
+                        payload_inner['Host'] = instance.get('PublicDnsName')
+                        payload_inner['Ip Address'] = instance.get('PublicIpAddress')
+                        payload_inner['Primary Ebs Size'] = root_devide.get("Size", "")
+                        payload_inner['Primary Ebs Encryption Status'] = "Encrypted" if root_devide.get(
+                            "Encrypted") else "UnEncrypted"
+                        payload_inner['Secondary Ebs Size'] = secondary_device.get("Size", "")
+                        payload_inner['Secondary Ebs Encryption Status'] = "Encrypted" if secondary_device.get(
+                            "Encrypted") else "UnEncrypted"
+                        payload_inner['Region'] = r
+                        launchedOver24hr = launched_in_last24hours(instance.get('LaunchTime'))
+                        if launchedOver24hr:
+                            payload_outer_launchecOver.append(payload_inner.copy())
+                        payload_outer.append(payload_inner.copy())
 
     field_names = ['Instance Name', 'Host', 'Ip Address', 'Primary Ebs Size', 'Primary Ebs Encryption Status',
                    'Secondary Ebs Size', 'Secondary Ebs Encryption Status'
