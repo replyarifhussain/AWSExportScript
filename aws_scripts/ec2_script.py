@@ -13,10 +13,13 @@ def export_ec2(regions, secret_key, secret_key_id, output_file_path):
     payload_outer_launchecOver = []
     payload_inner = dict()
     for r in regions:
-        session = boto3.Session(
-            aws_access_key_id=secret_key_id,
-            aws_secret_access_key=secret_key,
-            region_name=r)
+        if secret_key_id and secret_key:
+            session = boto3.Session(
+                aws_access_key_id=secret_key_id,
+                aws_secret_access_key=secret_key,
+                region_name=r)
+        else:
+            session = boto3.Session(region_name=r)
 
         ec2client = session.client('ec2')
         paginator = ec2client.get_paginator('describe_instances')
