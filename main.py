@@ -35,6 +35,8 @@ if __name__ == '__main__':
 
     try:
         recipients = os.getenv("TO_EMAIL").split(',')
+        from_email = os.getenv("FROM_EMAIL")
+
         SMTP_HOST = os.getenv("SMTP_HOST")
         SMTP_PORT = os.getenv("SMTP_PORT")
         EMAIL_SUBJECT = os.getenv("EMAIL_SUBJECT")
@@ -44,7 +46,11 @@ if __name__ == '__main__':
         files = list()
         for path in Path(filepath).glob("*.csv"):
             files.append(str(path))
-        email_helper.send_mail(subject=EMAIL_SUBJECT, text=EMAIL_BODY, send_to=recipients, files=files)
-
+        email_helper.send_email_ses(session,from_email,recipients,subject=EMAIL_SUBJECT, text=EMAIL_BODY,
+                               files=files)
+        print(f"Successful! Report files has been send via email")
     except Exception as e:
         print(f"Email Service failed to send email.{e}")
+
+
+
